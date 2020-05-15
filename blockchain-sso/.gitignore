@@ -3,6 +3,7 @@
 ######################
 /target/classes/static/**
 /src/test/javascript/coverage/
+data/
 
 ######################
 # Node

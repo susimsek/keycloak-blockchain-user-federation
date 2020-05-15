@@ -1,0 +1,139 @@
+# SPDX-License-Identifier: Apache-2.0
+version: '2.1'
+
+services:
+  blockchain-sso:
+    image: blockchain-sso:0.0.1-SNAPSHOT
+    container_name: blockchain-sso
+    restart: on-failure
+    networks:
+      - first-network
+    depends_on:
+      - redis
+    environment:
+      NETWORK_FILE: network/connection-prod-Org1.yml
+      ADMIN_USER: admin
+      ADMIN_PASS: root
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - 8081:8081
+
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    networks:
+      - first-network
+    environment:
+      REDIS_REPLICATION_MODE: master
+        #volumes:
+      # - ./redis-data:/var/lib/redis
+      # - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - 6379:6379
+
+  keycloak:
+    image: jboss/keycloak:10.0.1
+    container_name: keycloak
+    restart: on-failure
+    networks:
+      - first-network
+    depends_on:
+      - keycloak-postgres
+    command:
+      [
+        '-b',
+        '0.0.0.0',
+        '-Djboss.socket.binding.port-offset=1000',
+        '-Djava.net.preferIPv4Stack=true',
+        '-Dkeycloak.profile.feature.upload_scripts=enabled',
+        '-Dkeycloak.migration.action=import',
+        '-Dkeycloak.migration.provider=dir',
+        '-Dkeycloak.migration.dir=/tmp/keycloak-import',
+        '-Dkeycloak.migration.strategy=IGNORE_EXISTING',
+        '-Dkeycloak.migration.usersExportStrategy=SAME_FILE',
+        '-Dkeycloak.migration.realmName=blockchain'
+      ]
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-postgres
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_SCHEMA: public
+      DB_PASSWORD: keycloak
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: keycloak
+      PROXY_ADDRESS_FORWARDING: "true"
+      JDBC_PARAMS: "characterEncoding=UTF-8&createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true"
+      BLOCKCHAIN_BASE_URL: "http://blockchain-sso:8081"
+      BLOCKCHAIN_ADMIN_USER: admin
+      BLOCKCHAIN_ADMIN_PASS: root
+    ports:
+      - 9080:9080
+    volumes:
+      - ./keycloak/import:/tmp/keycloak-import
+      - ./keycloak/jars/:/opt/jboss/keycloak/standalone/deployments/
+
+  keycloak-postgres:
+    image: postgres:latest
+    container_name: keycloak-postgres
+    restart: on-failure
+    networks:
+      - first-network
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    #volumes:
+    #  - ./data/keycloak:/var/lib/postgresql/data
+
+  explorerdb:
+    image: hyperledger/explorer-db:latest
+    container_name: explorerdb
+    hostname: explorerdb
+    networks:
+      - first-network
+    environment:
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWORD=password
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -q -U postgres"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    #volumes:
+    #  - pgdata:/var/lib/postgresql/data
+
+  explorer:
+    image: hyperledger/explorer:latest
+    container_name: explorer
+    hostname: explorer
+    networks:
+      - first-network
+    depends_on:
+      explorerdb:
+        condition: service_healthy
+    environment:
+      - DATABASE_HOST=explorerdb
+      - DATABASE_DATABASE=fabricexplorer
+      - DATABASE_USERNAME=hppoc
+      - DATABASE_PASSWD=password
+      - LOG_LEVEL_APP=debug
+      - LOG_LEVEL_DB=debug
+      - LOG_LEVEL_CONSOLE=info
+      - LOG_CONSOLE_STDOUT=true
+      - DISCOVERY_AS_LOCALHOST=false
+    volumes:
+      - ./explorer/config.json:/opt/explorer/app/platform/fabric/config.json
+      - ./explorer/connection-profile:/opt/explorer/app/platform/fabric/connection-profile
+      - ./first-network/crypto-config:/tmp/crypto
+      # - ./data/walletstore:/opt/wallet
+    command: sh -c "node /opt/explorer/main.js && tail -f /dev/null"
+    ports:
+      - 8090:8080
+
+networks:
+  first-network:
+    external:
+      name: first-network_byfn

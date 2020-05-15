@@ -1,0 +1,50 @@
+server:
+   port: 8081
+
+security:
+  username: ${ADMIN_USER:admin}
+  password: ${ADMIN_PASS:root}
+  role: admin
+
+
+#Hyperledger Fabric Ayarları
+spring:
+   mvc:
+      locale: en
+      locale-resolver: fixed
+   fabric:
+      chaincode:
+         identify: mycc
+         name: Common Chaincode
+         version: 1.0
+      channel: mychannel
+      peers: 2
+      organizations:
+      - Org1
+      - Org2
+      name: Common Fabric Network
+      gateway:
+         commit-timeout: 30
+         wallet:
+            identity: admin
+      network:
+         file: ${NETWORK_FILE:network/connection-Org1.yml}
+         name: example-fabric
+# Fabric explorer
+      explorer:
+         title: Fabric Explorer
+#         logo: img/logo.png
+         copyright: susimsek (suaybsimsek58@gmail.com)
+         hyperledger-explorer-url: http://localhost:8090
+         path: /explorer
+
+# Redis Configuration
+   cache:
+      type: redis
+
+   redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+
+
