@@ -109,7 +109,8 @@ Swagger Url : http://localhost:8081
 
 Basic authentication is enabled in all rest apis.  
 Only admin user can access these APIs.        
-All rest apis can be tested on the swagger.    
+All rest apis can be tested on the swagger.  
+  
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/apis.png" alt="Blockchain Rest Apis" width="75%" height="75%"/>  
 
 ### Hyperledger Explorer
@@ -125,7 +126,8 @@ All transactions on the blockchain network can be viewed on hyperledger explorer
 
 Fabric Explorer Url : http://localhost:8081/explorer  
 
-Block info,block hash,blockchain network info information  on the blockchain network can be viewed on fabric explorer.  
+Block info,block hash,blockchain network info information  on the blockchain network can be viewed on fabric explorer.
+  
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/fabric-explorer-view.png" alt="Fabric Explorer View" width="75%" height="75%"/>  
 
 
