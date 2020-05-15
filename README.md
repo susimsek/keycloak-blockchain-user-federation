@@ -120,6 +120,7 @@ Admin Password : adminpw
 Hyperledger Explorer Url : http://localhost:8090  
 
 All transactions on the blockchain network can be viewed on hyperledger explorer.  
+
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/hyperledger-explorer-view.png" alt="Hyperledger Explorer View" width="75%" height="75%"/>
 
 ### Fabric Explorer
