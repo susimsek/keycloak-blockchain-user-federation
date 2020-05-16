@@ -54,7 +54,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"jim\",\n\t\"password\": \"1234\",\n\t\"email\": \"suaybsimsek51ff8@gmail.com\",\n\t\"name\":\"şuayb13\",\n\t\"surname\":\"şimşek1f\"\n}",
+							"raw": "{\n\t\"username\": \"jimd\",\n\t\"password\": \"1234\",\n\t\"email\": \"suaybsimsek51ff8@gmail.com\",\n\t\"name\":\"şuayb13\",\n\t\"surname\":\"şimşek1f\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -72,6 +72,64 @@
 								"api",
 								"v1",
 								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search-user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "82d3ebbf-6cb4-497b-8aec-388cc6031784",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "root",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"search\": \"jim\",\n\t\"firstResult\": 0,\n\t\"maxResults\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/v1/users/search",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"search"
 							]
 						}
 					},
