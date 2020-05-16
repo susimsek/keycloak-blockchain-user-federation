@@ -101,6 +101,7 @@ The following operations are currently active in the keycloak admin panel.
 * Delete User on Blockchain  
 * Change User Password on Blockchain  
 * Authenticate User on Blockchain  
+* Search User on Elasticsearch
 
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/keycloak-users-view.png" alt="Keycloak User View" width="75%" height="75%"/>  
 
