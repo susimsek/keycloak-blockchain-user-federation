@@ -3,6 +3,7 @@ package org.keycloak.fabric.service;
 
 import org.keycloak.fabric.dto.*;
 import org.keycloak.fabric.model.User;
+import org.keycloak.fabric.model.elasticsearch.UserElasticModel;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public interface UserService {
 
     UserDTO create(User user);
 
-    UserDTO update(String id,UserDTO userDTO);
+    UserDTO update(String id, UserDTO userDTO);
 
     void delete(String id);
 
@@ -26,6 +27,8 @@ public interface UserService {
 
     AuthStatusDTO isValid(CredentialDTO credentialDTO);
 
-    void changePassword(String id,PasswordChangeDTO passwordChangeDTO);
+    void changePassword(String id, PasswordChangeDTO passwordChangeDTO);
+
+    List<UserElasticModel> searchUser(UserSearchDTO userSearchDTO);
 
 }

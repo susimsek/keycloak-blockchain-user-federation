@@ -10,12 +10,15 @@ services:
       - first-network
     depends_on:
       - redis
+      - elasticsearch
     environment:
       NETWORK_FILE: network/connection-prod-Org1.yml
       ADMIN_USER: admin
       ADMIN_PASS: root
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9300
     ports:
       - 8081:8081
 
@@ -26,11 +29,39 @@ services:
       - first-network
     environment:
       REDIS_REPLICATION_MODE: master
-        #volumes:
+      #volumes:
       # - ./redis-data:/var/lib/redis
       # - ./redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - 6379:6379
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+    container_name: elasticsearch
+    restart: on-failure
+    networks:
+      - first-network
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node
+      cluster.name: elasticsearch
+    # volumes:
+    # - ./data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200 #http portu
+      - 9300:9300 #tcp portu
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.5.2
+    container_name: kibana
+    restart: on-failure
+    networks:
+      - first-network
+    environment:
+      SERVER_NAME: localhost
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200/
+    ports:
+      - 5601:5601
 
   keycloak:
     image: jboss/keycloak:10.0.1

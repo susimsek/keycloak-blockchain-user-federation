@@ -14,6 +14,7 @@ import org.keycloak.fabric.storage.user.util.AbstractHttpClient;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserServiceImpl extends AbstractHttpClient implements UserService {
@@ -22,18 +23,37 @@ public class UserServiceImpl extends AbstractHttpClient implements UserService {
 
     public UserServiceImpl() throws MalformedURLException {
         super();
-        objectMapper=new ObjectMapper();
+        objectMapper = new ObjectMapper();
+    }
+
+    @Override
+    public List<UserDTO> searchUser(UserSearchDTO userSearchDTO) {
+
+        String uri = getBaseUrl() + "/api/v1/users/search";
+        HttpResponse response = null;
+        try {
+            String userString = objectMapper.writeValueAsString(userSearchDTO);
+            response = post(uri, userString);
+            if (response.getStatusLine().getStatusCode() == 200) {
+                List<UserDTO> userDTOList = objectMapper.readValue(response.getEntity().getContent(), new TypeReference<List<UserDTO>>() {
+                });
+                return userDTOList;
+            }
+        } catch (IOException e) {
+            return Collections.EMPTY_LIST;
+        }
+        return Collections.EMPTY_LIST;
     }
 
     @Override
     public List<UserDTO> getAllUsers(int firstResult, int maxResults) {
-        String uri=getBaseUrl()+"/api/v1/users";
-        List<NameValuePair> nameValuePairList=new ArrayList<>();
-        NameValuePair firstResultNv = new BasicNameValuePair("firstResult",Integer.toString(firstResult));
-        NameValuePair maxResultsNv = new BasicNameValuePair("maxResults",Integer.toString(maxResults));
+        String uri = getBaseUrl() + "/api/v1/users";
+        List<NameValuePair> nameValuePairList = new ArrayList<>();
+        NameValuePair firstResultNv = new BasicNameValuePair("firstResult", Integer.toString(firstResult));
+        NameValuePair maxResultsNv = new BasicNameValuePair("maxResults", Integer.toString(maxResults));
         nameValuePairList.add(firstResultNv);
         nameValuePairList.add(maxResultsNv);
-        HttpResponse response= null;
+        HttpResponse response = null;
         try {
             response = get(uri,nameValuePairList);
             if(response.getStatusLine().getStatusCode()==200){
@@ -41,9 +61,9 @@ public class UserServiceImpl extends AbstractHttpClient implements UserService {
                 return userDTOList;
             }
         } catch (Exception e) {
-            return null;
+            return Collections.EMPTY_LIST;
         }
-        return null;
+        return Collections.EMPTY_LIST;
 
     }
 

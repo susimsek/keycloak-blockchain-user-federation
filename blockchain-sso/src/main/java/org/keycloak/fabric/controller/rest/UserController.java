@@ -4,6 +4,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.fabric.dto.*;
 import org.keycloak.fabric.model.User;
+import org.keycloak.fabric.model.elasticsearch.UserElasticModel;
 import org.keycloak.fabric.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,19 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @ApiOperation(value = "Search user")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully searching user"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/search")
+    public List<UserElasticModel> search(@ApiParam(value = "Search Object", required = true) @RequestBody UserSearchDTO userSearchDTO) {
+        return userService.searchUser(userSearchDTO);
+    }
 
     @ApiOperation(value = "User Authentication")
     @ApiResponses(value = {

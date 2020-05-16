@@ -8,6 +8,12 @@ Supported Keycloak Version : 10.0.1
 ## Keycloak 
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/keycloak-logo.png" alt="Keycloak" width="50%" height="50%"/>  
 
+## Elasticsearch 
+<img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/elastic-search-logo.png" alt="Elasticsearch" width="50%" height="50%"/>  
+
+## Kibana 
+<img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/kibana-logo.png" alt="Elasticsearch" width="50%" height="50%"/> 
+
 ## Redis 
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/redis-logo.png" alt="Redis" width="50%" height="50%"/>  
 
@@ -125,24 +131,34 @@ All transactions on the blockchain network can be viewed on hyperledger explorer
 
 ### Fabric Explorer
 
-Fabric Explorer Url : http://localhost:8081/explorer  
+Fabric Explorer Url : http://localhost:8081/explorer    
 
-Block info,block hash,blockchain network info information  on the blockchain network can be viewed on fabric explorer.
+Block info,block hash,blockchain network info information  on the blockchain network can be viewed on fabric explorer.  
   
 <img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/fabric-explorer-view.png" alt="Fabric Explorer View" width="75%" height="75%"/>  
+
+### Kibana
+
+Kibana Url : http://localhost:5601  
+
+
+Indexes on the elasticsearch side on kibana can be viewed  
+
+<img src="https://github.com/susimsek/keycloak-blockchain-user-federation/blob/master/images/kibana-view.png" alt="Kibana View" width="75%" height="75%"/> 
 
 
 ## Used Technologies
 
 * Spring Boot 2.2.6  
 * Keycloak  
-* Swagger  
-* Redis  
+* Elasticsearch  
+* Kibana  
+* Redis 
+* Swagger   
 * Hyperledger Fabric  
 * Hyperledger Explorer  
 * Fabric Explorer  
 
 ## Todo
-
-* Keycloak Blockchain Federation Elasticsearch Integration for User Searching  
+ 
 * Keycloak Blockchain Federation Helm Deployment  

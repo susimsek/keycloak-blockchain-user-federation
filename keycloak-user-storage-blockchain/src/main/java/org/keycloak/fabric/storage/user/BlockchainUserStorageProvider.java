@@ -22,9 +22,7 @@ import org.keycloak.credential.CredentialInput;
 import org.keycloak.credential.CredentialInputUpdater;
 import org.keycloak.credential.CredentialInputValidator;
 import org.keycloak.credential.CredentialModel;
-import org.keycloak.fabric.storage.user.dto.CredentialDTO;
-import org.keycloak.fabric.storage.user.dto.PasswordChangeDTO;
-import org.keycloak.fabric.storage.user.dto.UserDTO;
+import org.keycloak.fabric.storage.user.dto.*;
 import org.keycloak.fabric.storage.user.model.User;
 import org.keycloak.fabric.storage.user.service.UserService;
 import org.keycloak.fabric.storage.user.service.impl.UserServiceImpl;
@@ -275,7 +273,17 @@ public class BlockchainUserStorageProvider implements UserStorageProvider,
 
     @Override
     public List<UserModel> searchForUser(String search, RealmModel realm, int firstResult, int maxResults) {
-       return null;
+        UserSearchDTO userSearchDTO = new UserSearchDTO();
+        userSearchDTO.setSearch(search);
+        userSearchDTO.setFirstResult(firstResult);
+        userSearchDTO.setMaxResults(maxResults);
+
+        List<UserDTO> userDTOList = userService.searchUser(userSearchDTO);
+
+        List<UserModel> users = new LinkedList<>();
+        for (UserDTO userDTO : userDTOList)
+            users.add(new UserAdapter(session, realm, model, userDTO, this.userService));
+        return users;
     }
 
     @Override

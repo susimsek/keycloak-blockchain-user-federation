@@ -1,21 +1,27 @@
 server:
-   port: 8081
+  port: 8081
 
+#Spring Security Config
 security:
   username: ${ADMIN_USER:admin}
   password: ${ADMIN_PASS:root}
   role: admin
 
+#Elasticsearch Config
+elasticsearch:
+  clusterName: elasticsearch
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9300}
 
-#Hyperledger Fabric Ayarları
+#Hyperledger Fabric Config
 spring:
-   mvc:
-      locale: en
-      locale-resolver: fixed
-   fabric:
-      chaincode:
-         identify: mycc
-         name: Common Chaincode
+  mvc:
+    locale: en
+    locale-resolver: fixed
+  fabric:
+    chaincode:
+      identify: mycc
+      name: Common Chaincode
          version: 1.0
       channel: mychannel
       peers: 2

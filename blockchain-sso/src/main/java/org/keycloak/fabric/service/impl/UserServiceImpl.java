@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.keycloak.fabric.dto.*;
 import org.keycloak.fabric.error.UserNotFoundException;
 import org.keycloak.fabric.model.User;
+import org.keycloak.fabric.model.elasticsearch.UserElasticModel;
 import org.keycloak.fabric.repository.UserRepository;
+import org.keycloak.fabric.repository.elasticsearch.UserElasticRepository;
 import org.keycloak.fabric.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -12,6 +14,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -24,15 +29,17 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserElasticRepository userElasticRepository;
+
     private final ModelMapper modelMapper;
 
     private final PasswordEncoder passwordEncoder;
 
-    @Cacheable(value= "userCache", key= "#id")
+    @Cacheable(value = "userCache", key = "#id")
     @Override
     public UserDTO get(String id) {
         User user = userRepository.get(id);
-        if (user==null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
         return modelMapper.map(user,UserDTO.class);
@@ -76,8 +83,12 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
 
-        userRepository.create(user);
-        return modelMapper.map(user,UserDTO.class);
+        user = userRepository.create(user);
+
+        UserElasticModel userElasticModel = modelMapper.map(user, UserElasticModel.class);
+        userElasticRepository.save(userElasticModel);
+
+        return modelMapper.map(user, UserDTO.class);
     }
 
     @Caching(
@@ -87,16 +98,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO update(String id, UserDTO userDTO) {
         User user = userRepository.get(id);
-        if (user==null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
 
-       user.setEmail(userDTO.getEmail());
-       user.setName(userDTO.getName());
-       user.setSurname(userDTO.getSurname());
-       userRepository.update(user);
+        user.setEmail(userDTO.getEmail());
+        user.setName(userDTO.getName());
+        user.setSurname(userDTO.getSurname());
 
-       return modelMapper.map(user,UserDTO.class);
+        userRepository.update(user);
+
+        UserElasticModel userElasticModel = modelMapper.map(user, UserElasticModel.class);
+        userElasticRepository.save(userElasticModel);
+
+        return modelMapper.map(user, UserDTO.class);
     }
 
     @Caching(
@@ -112,6 +127,7 @@ public class UserServiceImpl implements UserService {
             throw new UserNotFoundException();
         }
         userRepository.delete(id);
+        userElasticRepository.deleteById(id);
     }
 
     @Override
@@ -136,12 +152,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void changePassword(String id, PasswordChangeDTO passwordChangeDTO) {
         User user = userRepository.get(id);
-        if (user==null){
+        if (user == null) {
             throw new UserNotFoundException();
         }
         String encodedPassword = passwordEncoder.encode(passwordChangeDTO.getPassword());
         user.setPassword(encodedPassword);
         userRepository.update(user);
 
+    }
+
+    @Override
+    public List<UserElasticModel> searchUser(UserSearchDTO userSearchDTO) {
+        if ((userSearchDTO.getFirstResult() == -1) || (userSearchDTO.getMaxResults() == -1)) {
+            return userElasticRepository.findByUsernameContainingOrEmailContaining(userSearchDTO.getSearch(), userSearchDTO.getSearch(), null);
+        }
+        Pageable pageable = PageRequest.of(userSearchDTO.getFirstResult(), userSearchDTO.getMaxResults());
+        return userElasticRepository.findByUsernameContainingOrEmailContaining(userSearchDTO.getSearch(), userSearchDTO.getSearch(), pageable);
     }
 }
