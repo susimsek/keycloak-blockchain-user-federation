@@ -13,7 +13,7 @@
     <properties>
         <version.compiler.maven.plugin>3.5.1</version.compiler.maven.plugin>
         <version.wildfly.maven.plugin>2.0.0.Final</version.wildfly.maven.plugin>
-        <apache.httpcomponents.version>4.5.11</apache.httpcomponents.version>
+        <apache.httpcomponents.version>4.5.13</apache.httpcomponents.version>
         <jackson.version>2.10.1</jackson.version>
         <version.jboss-ejb-api>1.0.0.Final</version.jboss-ejb-api>
         <jboss.logging.version>3.4.1.Final</jboss.logging.version>
