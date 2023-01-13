@@ -17,7 +17,7 @@
         <jackson.version>2.10.1</jackson.version>
         <version.jboss-ejb-api>1.0.0.Final</version.jboss-ejb-api>
         <jboss.logging.version>3.4.1.Final</jboss.logging.version>
-        <keycloak.version>10.0.1</keycloak.version>
+        <keycloak.version>20.0.3</keycloak.version>
         <wildfly-hostname>127.0.0.1</wildfly-hostname>
         <wildfly-port>10990</wildfly-port>
         <wildfly-username>admin</wildfly-username>
